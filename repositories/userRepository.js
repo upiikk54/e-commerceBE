@@ -15,6 +15,18 @@ class userRepository {
         return dataUsersByEmail;
     };
 
+    static async handleGetUsersByOTP({
+        otp
+    }) {
+        const dataUsersByOTP = await users.findOne({
+            where: {
+                otp
+            }
+        });
+
+        return dataUsersByOTP;
+    };
+
     static async handleRegister({
         user_name,
         email,
@@ -29,6 +41,37 @@ class userRepository {
         })
 
         return dataRegistered;
+    };
+
+    static async handleForgotPassword({
+        email,
+        otp
+    }) {
+        const sendOTP = await users.update({
+            otp
+        }, {
+            where: {
+                email
+            }
+        });
+
+        return sendOTP;
+    }
+
+    static async handleResetPassword({
+        password,
+        otp
+    }) {
+        const sendOTP = await users.update({
+            password,
+            otp: null
+        }, {
+            where: {
+                otp
+            }
+        });
+
+        return sendOTP;
     }
 }
 

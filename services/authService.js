@@ -2,6 +2,9 @@ const userRepository = require('../repositories/userRepository')
 const bycrpt = require('bcrypt')
 const jwt = require("jsonwebtoken");
 const {
+    passwordResetEmail
+} = require('../helpers/nodemailer')
+const {
     JWT
 } = require('../libs/const');
 const SALT_ROUND = 10;
@@ -305,7 +308,7 @@ class authService {
                     };
                 }
 
-                
+
             };
 
         } catch (e) {
@@ -319,6 +322,227 @@ class authService {
             };
         };
     };
+
+    static async handleForgotPassword({
+        email,
+        otp
+    }) {
+        try {
+            if (!email) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: "email harus diisi!",
+                    data: {
+                        forgotPasswordUser: null
+                    }
+                }
+            }
+
+            const getUsersByEmail = await userRepository.handleGetUsersByEmail({
+                email: email
+            })
+
+            if (!getUsersByEmail) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: "email tidak valid!",
+                    data: {
+                        forgotPasswordUser: null
+                    }
+                }
+            } else {
+                const emailTemplate = {
+                    from: 'e-commerce',
+                    to: email,
+                    subject: 'konfirmasi Reset Password Akun E-commerce kamu',
+                    html: `
+                    <body 
+                        style="
+                            background-color: #F1F6F5;
+                        "
+                        >
+                            <section style="padding: 4% 8%;">
+                                
+                                <div class="content"
+                                    style="
+                                    margin: 2% 0 0;
+                                    padding:2%; 
+                                    justify-content: center;
+                                    background-color: #FFFFFF;
+                                    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+                                    height: auto;"
+                                >
+                                
+                                    <img 
+                                        src="https://res.cloudinary.com/dbplhgttm/image/upload/v1670903425/Budgetin-logo_x8ecet.png" 
+                                        alt="logo-budgetin"
+                                    />
+
+                                    <h2 
+                                        style="
+                                        color: #000; 
+                                        text-decoration: none; 
+                                        list-style: none"
+                                    > Halo ${getUsersByEmail.email}, </h2>
+                                    
+                                    <p style="text-align: center; font-size: 16px; color: #000; margin-top: 16px;">
+                                        Untuk mengkonfirmasi permintaan reset password akun Ecommerce kamu, silakan salin OTP di bawah ini.
+                                    </p>
+                    
+                                    <p  class="otp"
+                                        style="
+                                        text-align: center; 
+                                        font-size: 20px;
+                                        padding: 2%;
+                                        background-color: #000;
+                                        color: #FFF;
+                                        font-weight: 700;
+                                        width: 30%;
+                                        display: block;
+                                        margin: 0 auto;
+                                        border-radius: 5px;"
+                                    >
+                                        ${otp}
+                                    </p>
+
+                                    <p  style="text-align: center; font-size: 16px; color: #000;"> 
+                                        Jika kamu tidak meminta reset password, silakan abaikan email ini.
+                                    </p>
+                                </div>
+                            </section>    
+                        </body>`
+                };
+
+                passwordResetEmail(emailTemplate);
+
+                const sendOTP = await userRepository.handleForgotPassword({
+                    email,
+                    otp
+                });
+
+                return {
+                    status: true,
+                    status_code: 201,
+                    message: 'Kode otp telah dikirim ke email akun anda.',
+                    data: {
+                        forgotPasswordUser: sendOTP
+                    }
+                }
+            }
+        } catch (e) {
+            return {
+                status: false,
+                status_code: 401,
+                message: 'Sumber tidak ada.',
+                data: {
+                    forgotPasswordUser: null
+                }
+            }
+        }
+    };
+
+    static async handleResetPassword({
+        password,
+        otp
+    }) {
+
+        try {
+            const validationPasswordUppercas = password.match(upperCaseLetter);
+            const validationPasswordNumbers = password.match(numbers);
+            const validationPasswordSpacing = password.match(spacing);
+
+            if (!password) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: "password harus diisi!",
+                    data: {
+                        resetPasswordUser: null
+                    }
+                }
+            } else if (password.length < 8) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: "password harus minimal harus 8 karakter!",
+                    data: {
+                        resetPasswordUser: null
+                    }
+                }
+            } else if (!validationPasswordUppercas) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: "password harus mengandung huruf kapital!",
+                    data: {
+                        resetPasswordUser: null
+                    }
+                }
+            } else if (!validationPasswordNumbers) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: "password harus mengandung angka!",
+                    data: {
+                        resetPasswordUser: null
+                    }
+                }
+            } else if (validationPasswordSpacing) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: "password tidak boleh diberi spasi!",
+                    data: {
+                        resetPasswordUser: null
+                    }
+                }
+            };
+
+            const getuserByOTP = await userRepository.handleGetUsersByOTP({
+                otp
+            })
+
+            if (getuserByOTP.otp == otp) {
+                const hashingPassword = await bycrpt.hash(password, SALT_ROUND);
+
+                const updatePassword = await userRepository.handleResetPassword({
+                    otp,
+                    password: hashingPassword
+                });
+
+                return {
+                    status: true,
+                    status_code: 201,
+                    message: 'password berhasil diubah!',
+                    data: {
+                        resetPasswordUser: updatePassword
+                    }
+                }
+            } else {
+                return {
+                    status: false,
+                    status_code: 401,
+                    message: 'kode otp tidak valid!',
+                    data: {
+                        resetPasswordUser: null
+                    }
+                }
+            }
+        } catch (e) {
+            return {
+                status: false,
+                status_code: 401,
+                message: e.message,
+                data: {
+                    resetPasswordUser: null
+                }
+            }
+        }
+
+    }
+
 };
 
 module.exports = authService;

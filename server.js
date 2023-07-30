@@ -23,6 +23,8 @@ const middlewares = require('./middlewares/auth')
 app.post("/api/v1/register", authController.handleRegister);
 app.post("/api/v1/login", authController.handleLogin);
 app.get("/api/v1/me", middlewares.authenticate, authController.currentUser);
+app.put("/api/v1/forgot-password", authController.handleForgotPassword);
+app.put("/api/v1/reset-password", authController.handleResetPassword);
 
 app.listen(process.env.PORT || PORT, () => {
     console.log(

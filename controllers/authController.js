@@ -1,5 +1,7 @@
 const authService = require('../services/authService')
-
+const {
+    generateOTP
+} = require('../helpers/otpGenerator')
 const handleRegister = async (req, res) => {
     const {
         user_name,
@@ -49,7 +51,7 @@ const handleLogin = async (req, res) => {
     });
 };
 
-const currentUser = async ( req, res) => {
+const currentUser = async (req, res) => {
     const currentUser = req.user;
 
     res.status(200).send({
@@ -59,10 +61,57 @@ const currentUser = async ( req, res) => {
             user: currentUser
         }
     })
+};
+
+const handleForgotPassword = async (req, res) => {
+    const {
+        email
+    } = req.body
+
+    const {
+        status,
+        status_code,
+        message,
+        data
+    } = await authService.handleForgotPassword({
+        email,
+        otp: generateOTP()
+    });
+
+    res.status(status_code).send({
+        status: status,
+        message: message,
+        data: data,
+    })
+}
+
+const handleResetPassword = async (req, res) => {
+    const {
+        password,
+        otp
+    } = req.body
+
+    const {
+        status,
+        status_code,
+        message,
+        data
+    } = await authService.handleResetPassword({
+        password,
+        otp
+    });
+
+    res.status(status_code).send({
+        status: status,
+        message: message,
+        data: data,
+    })
 }
 
 module.exports = {
     handleRegister,
     handleLogin,
-    currentUser
+    currentUser,
+    handleForgotPassword,
+    handleResetPassword
 }
