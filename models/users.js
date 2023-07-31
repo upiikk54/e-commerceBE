@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       users.hasMany(models.categorys);
+      users.hasMany(models.products);
     }
   }
   users.init({
