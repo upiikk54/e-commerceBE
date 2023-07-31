@@ -28,13 +28,13 @@ class userRepository {
     };
 
     static async handleRegister({
-        user_name,
+        userName,
         email,
         password,
         role
     }) {
         const dataRegistered = await users.create({
-            user_name,
+            userName,
             email,
             password,
             role

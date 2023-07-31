@@ -16,7 +16,7 @@ const spacing = /[\s]/g;
 
 class authService {
     static async handleRegister({
-        user_name,
+        userName,
         email,
         password,
         role
@@ -68,7 +68,7 @@ class authService {
                 }
             };
 
-            if (!user_name) {
+            if (!userName) {
                 return {
                     status: false,
                     status_code: 400,
@@ -77,7 +77,7 @@ class authService {
                         registeredUsers: null
                     }
                 }
-            } else if (user_name.length >= 15) {
+            } else if (userName.length >= 15) {
                 return {
                     status: false,
                     status_code: 400,
@@ -151,7 +151,7 @@ class authService {
             } else {
                 const hashingPassword = await bycrpt.hash(password, SALT_ROUND);
                 const registeredUser = await userRepository.handleRegister({
-                    user_name,
+                    userName,
                     email,
                     password: hashingPassword,
                     role

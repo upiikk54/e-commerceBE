@@ -2,9 +2,10 @@ const authService = require('../services/authService')
 const {
     generateOTP
 } = require('../helpers/otpGenerator')
+
 const handleRegister = async (req, res) => {
     const {
-        user_name,
+        userName,
         email,
         password,
         role
@@ -16,7 +17,7 @@ const handleRegister = async (req, res) => {
         message,
         data
     } = await authService.handleRegister({
-        user_name,
+        userName,
         email,
         password,
         role

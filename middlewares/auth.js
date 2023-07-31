@@ -11,7 +11,7 @@ const authenticate = async (req, res, next) => {
         token = authHeader.split(" ")[1];
 
     else
-        return res.status(status_code).send({
+        return res.status(401).send({
             status: false,
             message: "kamu harus login untuk mengakses fitur ini",
             data: null
