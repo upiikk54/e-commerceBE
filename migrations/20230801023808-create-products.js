@@ -29,6 +29,9 @@ module.exports = {
       productDescription: {
         type: Sequelize.STRING
       },
+      image: {
+        type: Sequelize.JSON
+      },
       productPrice: {
         type: Sequelize.INTEGER
       },

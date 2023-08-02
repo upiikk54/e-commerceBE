@@ -6,7 +6,7 @@ const handleCreateProduct = async (req, res) => {
         productDescription,
         productPrice,
         productStock,
-        categoryId
+        categoryId,
     } = req.body;
 
     const userId = req.user.id;
@@ -19,6 +19,7 @@ const handleCreateProduct = async (req, res) => {
     } = await productService.handleCreateProduct({
         nameProduct,
         productDescription,
+        image: req.files,
         productPrice,
         productStock,
         categoryId,
@@ -78,7 +79,9 @@ const handleUpdateProductById = async (req, res) => {
         categoryId
     } = req.body;
 
-    const {id} =req.params
+    const {
+        id
+    } = req.params
 
     const userId = req.user.id
 
@@ -90,6 +93,7 @@ const handleUpdateProductById = async (req, res) => {
     } = await productService.handleUpdateProductById({
         nameProduct,
         productDescription,
+        image: req.files,
         productPrice,
         productStock,
         categoryId,
@@ -102,11 +106,36 @@ const handleUpdateProductById = async (req, res) => {
         message: message,
         data: data
     });
+};
+
+const handleDeleteProductById = async (req, res) => {
+    const {
+        id
+    } = req.params;
+
+    const userId = req.user.id
+
+    const {
+        status,
+        status_code,
+        message,
+        data
+    } = await productService.handleDeleteProductById({
+        id,
+        userId
+    });
+
+    res.status(status_code).send({
+        status: status,
+        message: message,
+        data: data
+    })
 }
 
 module.exports = {
     handleCreateProduct,
     handleGetAllProduct,
     handleGetProductById,
-    handleUpdateProductById
+    handleUpdateProductById,
+    handleDeleteProductById,
 }

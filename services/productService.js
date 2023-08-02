@@ -1,15 +1,20 @@
 const productRepository = require('../repositories/productRepository');
+const cloudinary = require("../utils/cloudinary");
 
 class productService {
     static async handleCreateProduct({
         nameProduct,
         productDescription,
+        image,
         productPrice,
         productStock,
         categoryId,
         userId
     }) {
         try {
+
+
+
             if (!nameProduct) {
                 return {
                     status: false,
@@ -61,9 +66,19 @@ class productService {
                 }
             };
 
+            const images = [];
+
+            await Promise.all(image.image.map(async (img) => {
+                const fileBase64 = img.buffer.toString("base64");
+                const file = `data:${img.mimetype};base64,${fileBase64}`;
+                const cloudinaryImage = await cloudinary.uploader.upload(file);
+                images.push(cloudinaryImage.url);
+            }));
+
             const createdProduct = await productRepository.handleCreateProduct({
                 nameProduct,
                 productDescription,
+                image: images,
                 productPrice,
                 productStock,
                 categoryId,
@@ -144,6 +159,7 @@ class productService {
     static async handleUpdateProductById({
         nameProduct,
         productDescription,
+        image,
         productPrice,
         productStock,
         categoryId,
@@ -156,6 +172,20 @@ class productService {
             });
 
             if (getDataProductById.userId == userId) {
+
+                let images = [];
+
+                if (image.image) {
+                    await Promise.all(image.image.map(async (img) => {
+                        const fileBase64 = img.buffer.toString("base64");
+                        const file = `data:${img.mimetype};base64,${fileBase64}`;
+                        const cloudinaryImage = await cloudinary.uploader.upload(file);
+                        images.push(cloudinaryImage.url);
+                    }))
+                } else {
+                    images = getDataProductById.image
+                }
+
                 if (!nameProduct) {
                     nameProduct = getDataProductById.nameProduct
                 }
@@ -175,6 +205,7 @@ class productService {
                 const updatedProduct = await productRepository.handleUpdateProductById({
                     nameProduct,
                     productDescription,
+                    image: images,
                     productPrice,
                     productStock,
                     categoryId,
@@ -182,7 +213,7 @@ class productService {
                     id
                 })
 
-                return{
+                return {
                     status: true,
                     status_code: 202,
                     message: 'produk berhasil di edit!',
@@ -201,7 +232,51 @@ class productService {
                 }
             }
         }
-    }
+    };
+
+    static async handleDeleteProductById({
+        id,
+        userId
+    }) {
+        try {
+            const getDataProductById = await productRepository.handleGetProductById({
+                id
+            });
+
+            if (getDataProductById.userId == userId) {
+                const deletedDataProduct = await productRepository.handleDeleteProductById({
+                    id
+                })
+
+                return {
+                    status: true,
+                    status_code: 202,
+                    message: 'produk berhasil dihapus!',
+                    data: {
+                        delete_product: deletedDataProduct
+                    }
+                }
+            } else {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: 'silahkan menggunakan akun anda yang membuat data ini!',
+                    data: {
+                        delete_product: null
+                    }
+                }
+            }
+        } catch (e) {
+            return {
+                status: false,
+                status_code: 401,
+                message: e.message,
+                data: {
+                    delete_product: null
+                }
+            }
+        }
+    };
 };
 
 module.exports = productService;

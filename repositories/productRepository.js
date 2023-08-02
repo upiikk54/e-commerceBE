@@ -8,6 +8,7 @@ class productRepository {
     static async handleCreateProduct({
         nameProduct,
         productDescription,
+        image,
         productPrice,
         productStock,
         categoryId,
@@ -16,6 +17,7 @@ class productRepository {
         const createdProduct = await products.create({
             nameProduct,
             productDescription,
+            image,
             productPrice,
             productStock,
             categoryId,
@@ -56,6 +58,7 @@ class productRepository {
     static async handleUpdateProductById({
         nameProduct,
         productDescription,
+        image,
         productPrice,
         productStock,
         categoryId,
@@ -64,6 +67,7 @@ class productRepository {
         const updateDataProduct = await products.update({
             nameProduct,
             productDescription,
+            image,
             productPrice,
             productStock,
             categoryId
@@ -74,7 +78,18 @@ class productRepository {
         });
 
         return updateDataProduct;
-    }
+    };
+
+    static async handleDeleteProductById({
+        id
+    }) {
+        const deletedDataProduct = await products.destroy({
+            where: {
+                id
+            }
+        });
+        return deletedDataProduct;
+    };
 };
 
 module.exports = productRepository;

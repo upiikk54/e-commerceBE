@@ -4,6 +4,7 @@ const PORT = 8980;
 const bodyParse = require("body-parser");
 const cors = require("cors");
 const path = require("path");
+const upload = require('./utils/fileUpload');
 
 app.use(express.json());
 app.use(
@@ -36,10 +37,11 @@ app.delete("/api/v1/delete-category/:id", middlewares.authenticate, categoryCont
 app.put("/api/v1/update-category/:id", middlewares.authenticate, categoryController.handleUpdateCategoryById);
 
 // API Product
-app.post("/api/v1/create-product", middlewares.authenticate, productController.handleCreateProduct);
+app.post("/api/v1/create-product", middlewares.authenticate, upload.fields([{name: "image"}]), productController.handleCreateProduct);
 app.get("/api/v1/get-all-product", productController.handleGetAllProduct);
 app.get("/api/v1/get-by-id-product/:id", middlewares.authenticate, productController.handleGetProductById);
-app.put("/api/v1/update-product/:id", middlewares.authenticate, productController.handleUpdateProductById);
+app.put("/api/v1/update-product/:id", middlewares.authenticate, upload.fields([{name: "image"}]), productController.handleUpdateProductById);
+app.delete("/api/v1/delete-product/:id", middlewares.authenticate, productController.handleDeleteProductById);
 
 app.listen(process.env.PORT || PORT, () => {
     console.log(
