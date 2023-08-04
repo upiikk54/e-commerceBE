@@ -1,5 +1,6 @@
 const {
-    users
+    users,
+    carts
 } = require('../models')
 
 class userRepository {
@@ -56,7 +57,7 @@ class userRepository {
         });
 
         return sendOTP;
-    }
+    };
 
     static async handleResetPassword({
         password,
@@ -72,6 +73,18 @@ class userRepository {
         });
 
         return sendOTP;
+    };
+
+    static async handleGetCartByUserId({
+        id
+    }) {
+        const getDataCartByUserId = await carts.findAll({
+            where: {
+                userId: id
+            }
+        });
+
+        return getDataCartByUserId;
     }
 }
 

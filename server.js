@@ -18,6 +18,8 @@ app.use(cors());
 const authController = require('./controllers/authController');
 const categoryController = require('./controllers/categoryController');
 const productController = require('./controllers/productController');
+const cartController = require('./controllers/CartController');
+const userController = require('./controllers/userController')
 
 // import middlewares
 const middlewares = require('./middlewares/auth')
@@ -42,6 +44,13 @@ app.get("/api/v1/get-all-product", productController.handleGetAllProduct);
 app.get("/api/v1/get-by-id-product/:id", middlewares.authenticate, productController.handleGetProductById);
 app.put("/api/v1/update-product/:id", middlewares.authenticate, upload.fields([{name: "image"}]), productController.handleUpdateProductById);
 app.delete("/api/v1/delete-product/:id", middlewares.authenticate, productController.handleDeleteProductById);
+
+// API Cart
+app.post("/api/v1/create-cart", middlewares.authenticate, cartController.handleCreateCart);
+app.get("/api/v1/get-all-cart", cartController.handleGetAllCart);
+app.get("/api/v1/get-data-cart/:id", middlewares.authenticate, cartController.handleCartById);
+app.get("/api/v1/users/:id/cart", middlewares.authenticate, userController.handleGetCartByUserId);
+app.delete("/api/v1/delete-cart/:id", middlewares.authenticate, cartController.handleDeleteCartById);
 
 app.listen(process.env.PORT || PORT, () => {
     console.log(
