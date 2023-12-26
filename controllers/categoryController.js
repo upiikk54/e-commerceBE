@@ -5,7 +5,8 @@ const handleCreateCategory = async (req, res) => {
         categoryName
     } = req.body;
 
-    const userId = req.user.id
+    const userId = req.user.id;
+    const userRole = req.user.role;
 
     const {
         status,
@@ -14,7 +15,8 @@ const handleCreateCategory = async (req, res) => {
         data
     } = await categoryService.handleCreateCategory({
         categoryName,
-        userId
+        userId,
+        userRole
     });
 
     res.status(statuc_code).send({
@@ -93,6 +95,8 @@ const handleUpdateCategoryById = async (req, res) => {
         id
     } = req.params;
     const userId = req.user.id;
+    const userRole = req.user.role;
+
 
     const {
         status,
@@ -102,7 +106,8 @@ const handleUpdateCategoryById = async (req, res) => {
     } = await categoryService.handleUpdateCategoryById({
         categoryName,
         id,
-        userId
+        userId,
+        userRole
     });
 
     res.status(status_code).send({

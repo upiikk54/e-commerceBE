@@ -3,7 +3,8 @@ const categoryRepository = require('../repositories/categoryRepository');
 class categoryService {
     static async handleCreateCategory({
         categoryName,
-        userId
+        userId,
+        userRole
     }) {
         try {
             if (!categoryName) {
@@ -17,19 +18,45 @@ class categoryService {
                 };
             };
 
-            const createdCategory = await categoryRepository.handleCreateCategory({
-                userId,
+            const dataCategoryByName = await categoryRepository.handleGetCategoryByName({
                 categoryName
             });
+            
+            if (dataCategoryByName) {
+                return {
+                    status: false,
+                    statuc_code: 400,
+                    message: `kategori dengan nama ${categoryName} sudah dibuat!`,
+                    data: {
+                        createCategory: null
+                    }
+                };
+            }
 
-            return {
-                status: true,
-                statuc_code: 201,
-                message: 'Kategori berhasil dibuat!',
-                data: {
-                    createCategory: createdCategory
-                }
-            };
+            if (userRole == 'admin') {
+                const createdCategory = await categoryRepository.handleCreateCategory({
+                    userId,
+                    categoryName
+                });
+
+                return {
+                    status: true,
+                    statuc_code: 201,
+                    message: 'Kategori berhasil dibuat!',
+                    data: {
+                        createCategory: createdCategory
+                    }
+                };
+            } else {
+                return {
+                    status: false,
+                    statuc_code: 401,
+                    message: 'Hanya admin yang dapat merubah kategori!',
+                    data: {
+                        createCategory: null
+                    }
+                };
+            }
         } catch (e) {
             return {
                 status: false,
@@ -72,7 +99,7 @@ class categoryService {
         try {
             const getCategoryByIdData = await categoryRepository.handleGetCategoryById({
                 id
-            })
+            });
             return {
                 status: true,
                 status_code: 201,
@@ -95,7 +122,7 @@ class categoryService {
 
     static async handleDeleteCategoryById({
         id,
-        userId
+        userId,
     }) {
         try {
             const getCategoryByIdData = await categoryRepository.handleGetCategoryById({
@@ -131,14 +158,30 @@ class categoryService {
     static async handleUpdateCategoryById({
         id,
         categoryName,
-        userId
+        userId,
+        userRole
     }) {
         try {
             const getCategoryByIdData = await categoryRepository.handleGetCategoryById({
                 id
             })
 
-            if (getCategoryByIdData.userId == userId) {
+            const dataCategoryByName = await categoryRepository.handleGetCategoryByName({
+                categoryName
+            });
+
+            if (dataCategoryByName) {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: `kategori dengan nama ${categoryName} sudah dibuat!`,
+                    data: {
+                        update_category: null
+                    }
+                };
+            }
+
+            if (getCategoryByIdData.userId == userId && userRole == 'admin') {
 
                 if (!categoryName) {
                     categoryName = getCategoryByIdData.categoryName

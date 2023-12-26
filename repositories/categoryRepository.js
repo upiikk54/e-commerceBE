@@ -69,6 +69,18 @@ class categoryRepository {
 
         return updateCategory;
     };
+
+    static async handleGetCategoryByName({
+        categoryName
+    }) {
+        const categoryByName = await categorys.findOne({
+            where: {
+                categoryName: categoryName
+            }
+        })
+
+        return categoryByName;
+    }
 };
 
 module.exports = categoryRepository;
