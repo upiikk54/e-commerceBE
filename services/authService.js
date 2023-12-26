@@ -307,8 +307,6 @@ class authService {
                         }
                     };
                 }
-
-
             };
 
         } catch (e) {
@@ -374,12 +372,6 @@ class authService {
                                     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
                                     height: auto;"
                                 >
-                                
-                                    <img 
-                                        src="https://res.cloudinary.com/dbplhgttm/image/upload/v1670903425/Budgetin-logo_x8ecet.png" 
-                                        alt="logo-budgetin"
-                                    />
-
                                     <h2 
                                         style="
                                         color: #000; 

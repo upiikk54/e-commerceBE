@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       users.hasMany(models.categorys);
       users.hasMany(models.products);
       users.hasMany(models.carts);
+      users.hasMany(models.favorits);
     }
   }
   users.init({
@@ -20,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     role: DataTypes.STRING,
-    otp: DataTypes.STRING
+    otp: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'users',

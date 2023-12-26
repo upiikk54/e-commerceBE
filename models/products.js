@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       products.hasMany(models.carts);
+      products.hasMany(models.favorits);
     }
   }
   products.init({
