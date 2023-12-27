@@ -123,11 +123,23 @@ class categoryService {
     static async handleDeleteCategoryById({
         id,
         userId,
+        userRole
     }) {
         try {
             const getCategoryByIdData = await categoryRepository.handleGetCategoryById({
                 id
             })
+
+            if (userRole !== 'admin') {
+                return {
+                    status: false,
+                    status_code: 400,
+                    message: 'Hanya admin yang dapat menghapus kategori!',
+                    data: {
+                        delete_category: null
+                    }
+                };
+            }
 
             if (getCategoryByIdData.userId == userId) {
                 const deleteCategory = await categoryRepository.handleDeleteCategoryById({

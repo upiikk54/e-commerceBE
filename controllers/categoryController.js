@@ -68,6 +68,7 @@ const handleDeleteCategoryById = async (req, res) => {
     } = req.params;
 
     const userId = req.user.id
+    const userRole = req.user.role
 
     const {
         status,
@@ -76,7 +77,8 @@ const handleDeleteCategoryById = async (req, res) => {
         data
     } = await categoryService.handleDeleteCategoryById({
         id,
-        userId
+        userId,
+        userRole
     });
 
     res.status(status_code).send({
