@@ -10,6 +10,7 @@ const handleCreateProduct = async (req, res) => {
     } = req.body;
 
     const userId = req.user.id;
+    const userRole = req.user.role;
 
     const {
         status,
@@ -23,7 +24,8 @@ const handleCreateProduct = async (req, res) => {
         productPrice,
         productStock,
         categoryId,
-        userId
+        userId,
+        userRole
     });
 
     res.status(status_code).send({

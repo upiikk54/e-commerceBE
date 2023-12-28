@@ -9,11 +9,10 @@ class productService {
         productPrice,
         productStock,
         categoryId,
-        userId
+        userId,
+        userRole
     }) {
         try {
-
-
 
             if (!nameProduct) {
                 return {
@@ -64,6 +63,17 @@ class productService {
                         create_product: null
                     }
                 }
+            };
+
+            if (userRole !== 'admin') {
+                return {
+                    status: false,
+                    status_code: 401,
+                    message: 'Hanya admin yang dapat membuat produk!',
+                    data: {
+                        create_product: null
+                    }
+                };
             };
 
             const images = [];
