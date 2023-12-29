@@ -1,4 +1,7 @@
 const {
+    Op
+} = require('sequelize');
+const {
     products,
     users,
     categorys
@@ -27,7 +30,11 @@ class productRepository {
         return createdProduct;
     };
 
-    static async handleGetAllProduct() {
+    static async handleGetAllProduct({
+        nameProduct,
+        productPrice
+    }) {
+
         const getDataAllProduct = await products.findAll({
             include: [{
                     model: users,
@@ -39,6 +46,34 @@ class productRepository {
                 }
             ]
         })
+
+        if (nameProduct) {
+            const searchByName = await products.findAll({
+                where: {
+                    [Op.or]: [{
+                        nameProduct: {
+                            [Op.like]: '%' + nameProduct + '%'
+                        }
+                    }, ]
+                },
+                limit: 10,
+            });
+
+            return searchByName;
+        }
+
+        if (productPrice) {
+            const searchByPrice = await products.findAll({
+                where: {
+                    productPrice: {
+                        [Op.gte]: productPrice
+                    }
+                }
+            });
+
+            return searchByPrice;
+        }
+
 
         return getDataAllProduct;
     };

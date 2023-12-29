@@ -41,7 +41,7 @@ app.put("/api/v1/update-category/:id", middlewares.authenticate, categoryControl
 // API Product
 app.post("/api/v1/create-product", middlewares.authenticate, upload.fields([{name: "image"}]), productController.handleCreateProduct);
 app.get("/api/v1/get-all-product", productController.handleGetAllProduct);
-app.get("/api/v1/get-by-id-product/:id", middlewares.authenticate, productController.handleGetProductById);
+app.get("/api/v1/get-by-id-product/:id", productController.handleGetProductById);
 app.put("/api/v1/update-product/:id", middlewares.authenticate, upload.fields([{name: "image"}]), productController.handleUpdateProductById);
 app.delete("/api/v1/delete-product/:id", middlewares.authenticate, productController.handleDeleteProductById);
 

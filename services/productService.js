@@ -115,9 +115,15 @@ class productService {
         }
     };
 
-    static async handleGetAllProduct() {
+    static async handleGetAllProduct({
+        nameProduct,
+        productPrice
+    }) {
         try {
-            const getDataAllProduct = await productRepository.handleGetAllProduct();
+            const getDataAllProduct = await productRepository.handleGetAllProduct({
+                nameProduct,
+                productPrice
+            });
 
             return {
                 status: true,
@@ -174,12 +180,23 @@ class productService {
         productStock,
         categoryId,
         userId,
+        userRole,
         id
     }) {
         try {
             const getDataProductById = await productRepository.handleGetProductById({
                 id
             });
+            if (userRole !== 'admin') {
+                return {
+                    status: false,
+                    status_code: 401,
+                    message: 'Hanya admin yang dapat membuat product!',
+                    data: {
+                        update_product: null
+                    }
+                }
+            };
 
             if (getDataProductById.userId == userId) {
 
@@ -246,12 +263,24 @@ class productService {
 
     static async handleDeleteProductById({
         id,
-        userId
+        userId,
+        userRole
     }) {
         try {
             const getDataProductById = await productRepository.handleGetProductById({
                 id
             });
+
+            if (userRole !== 'admin') {
+                return {
+                    status: false,
+                    status_code: 401,
+                    message: 'Hanya admin yang dapat menghapus produk!',
+                    data: {
+                        delete_product: null
+                    }
+                }
+            };
 
             if (getDataProductById.userId == userId) {
                 const deletedDataProduct = await productRepository.handleDeleteProductById({

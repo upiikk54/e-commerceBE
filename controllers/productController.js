@@ -37,11 +37,18 @@ const handleCreateProduct = async (req, res) => {
 
 const handleGetAllProduct = async (req, res) => {
     const {
+        nameProduct,
+        productPrice
+    } = req.query;
+    const {
         status,
         status_code,
         message,
         data
-    } = await productService.handleGetAllProduct();
+    } = await productService.handleGetAllProduct({
+        nameProduct,
+        productPrice
+    });
 
     res.status(status_code).send({
         status: status,
@@ -83,9 +90,11 @@ const handleUpdateProductById = async (req, res) => {
 
     const {
         id
-    } = req.params
+    } = req.params;
 
-    const userId = req.user.id
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
 
     const {
         status,
@@ -100,6 +109,7 @@ const handleUpdateProductById = async (req, res) => {
         productStock,
         categoryId,
         userId,
+        userRole,
         id
     });
 
@@ -115,7 +125,8 @@ const handleDeleteProductById = async (req, res) => {
         id
     } = req.params;
 
-    const userId = req.user.id
+    const userId = req.user.id;
+    const userRole = req.user.role;
 
     const {
         status,
@@ -124,7 +135,8 @@ const handleDeleteProductById = async (req, res) => {
         data
     } = await productService.handleDeleteProductById({
         id,
-        userId
+        userId,
+        userRole
     });
 
     res.status(status_code).send({
