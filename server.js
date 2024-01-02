@@ -18,8 +18,9 @@ app.use(cors());
 const authController = require('./controllers/authController');
 const categoryController = require('./controllers/categoryController');
 const productController = require('./controllers/productController');
-const cartController = require('./controllers/CartController');
-const userController = require('./controllers/userController')
+const cartController = require('./controllers/cartController');
+const userController = require('./controllers/userController');
+const favoritController = require('./controllers/favoritController');
 
 // import middlewares
 const middlewares = require('./middlewares/auth')
@@ -51,6 +52,10 @@ app.get("/api/v1/get-all-cart", cartController.handleGetAllCart);
 app.get("/api/v1/get-data-cart/:id", middlewares.authenticate, cartController.handleCartById);
 app.get("/api/v1/users/:id/cart", middlewares.authenticate, userController.handleGetCartByUserId);
 app.delete("/api/v1/delete-cart/:id", middlewares.authenticate, cartController.handleDeleteCartById);
+
+// API Favorit
+app.post("/api/v1/create-favorit", middlewares.authenticate, favoritController.handleCreateFavorit);
+app.get("/users/:id/get-favorit", middlewares.authenticate, userController.handleGetFavoritByUserId);
 
 app.listen(process.env.PORT || PORT, () => {
     console.log(
