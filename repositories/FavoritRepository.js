@@ -15,11 +15,35 @@ class favoritRepository {
         return createdFavorit;
     };
 
-    static async getAllFavorit(){
+    static async handleGetAllFavorit() {
         const getAllDataFavorit = await favorits.findAll();
 
         return getAllDataFavorit;
-    }
+    };
+
+    static async handleGetFavoritById({
+        id
+    }) {
+        const getDataFavoritById = await favorits.findOne({
+            where: {
+                id
+            }
+        });
+
+        return getDataFavoritById;
+    };
+
+    static async handleDeleteFavorits({
+        id
+    }) {
+        const deleteFavorits = await favorits.destroy({
+            where: {
+                id
+            }
+        });
+
+        return deleteFavorits;
+    };
 };
 
 module.exports = favoritRepository;

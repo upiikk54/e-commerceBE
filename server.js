@@ -56,6 +56,7 @@ app.delete("/api/v1/delete-cart/:id", middlewares.authenticate, cartController.h
 // API Favorit
 app.post("/api/v1/create-favorit", middlewares.authenticate, favoritController.handleCreateFavorit);
 app.get("/users/:id/get-favorit", middlewares.authenticate, userController.handleGetFavoritByUserId);
+app.delete("/api/v1/delete-favorit/:id", middlewares.authenticate, favoritController.handleDeleteFavorits);
 
 app.listen(process.env.PORT || PORT, () => {
     console.log(

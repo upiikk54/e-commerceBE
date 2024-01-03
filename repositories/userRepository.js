@@ -1,6 +1,8 @@
 const {
     users,
-    carts
+    carts,
+    favorits,
+    products
 } = require('../models')
 
 class userRepository {
@@ -82,6 +84,28 @@ class userRepository {
             where: {
                 userId: id
             }
+        });
+
+        return getDataCartByUserId;
+    }
+
+    static async handleGetFavoritByUserId({
+        id
+    }) {
+        const getDataCartByUserId = await favorits.findAll({
+            where: {
+                userId: id
+            },
+            include: [{
+                    model: users,
+                    attributes: ['userName', 'role'],
+
+                },
+                {
+                    model: products,
+                    attributes: ['nameProduct', 'productDescription', 'image', 'productPrice', 'productStock'],
+                }
+            ]
         });
 
         return getDataCartByUserId;

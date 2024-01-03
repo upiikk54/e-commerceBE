@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   favorits.init({
-    nameFavorit: DataTypes.STRING
+    userId: DataTypes.INTEGER,
+    productId: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'favorits',

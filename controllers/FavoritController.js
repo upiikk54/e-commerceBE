@@ -24,8 +24,33 @@ const handleCreateFavorit = async (req, res) => {
     })
 }
 
+const handleDeleteFavorits = async (req, res) => {
+    const {
+        id
+    } = req.params;
+    
+    const userId = req.user.id;
+
+    const {
+        status,
+        status_code,
+        message,
+        data
+    } = await favoritService.handleDeleteFavorits({
+        id,
+        userId
+    })
+
+    res.status(status_code).send({
+        status: status,
+        message: message,
+        data: data
+    })
+}
+
 
 
 module.exports = {
-    handleCreateFavorit
+    handleCreateFavorit,
+    handleDeleteFavorits
 };
